@@ -554,7 +554,7 @@ class Peminjaman extends CI_Controller {
 		$object = new PHPExcel();
 		$object->setActiveSheetIndex(0);
 		
-		$table_columns = array("Name", "Address", "Gender", "Designation", "Age");
+		$table_columns = array("No", "Jenis", "No. Peminjaman", "Status Peminjam", "Id Peminjam", "Peminjam", "Tgl Pinjam", "Tgl Pengembalian");
 
 		$column = 0;
 
@@ -564,22 +564,26 @@ class Peminjaman extends CI_Controller {
 			$column++;
 		}
 		
-		$data = $this->m_peminjaman->fetch_data();
+		$data = $this->m_peminjaman->getAllData()->result();
 		$excel_row = 2;
-		
+		$i = 1;
 		foreach($data as $row)
 		{
-			$object->getActiveSheet()->setCellValueByColumnAndRow(0, $excel_row, $row->jenis_pinjaman);
-			$object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, $row->no_peminjaman);
-			$object->getActiveSheet()->setCellValueByColumnAndRow(2, $excel_row, $row->peminjam);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(0, $excel_row, $i);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(1, $excel_row, ($row->jenis_pinjaman==1)?'Peminjaman':'Praktikum');
+			$object->getActiveSheet()->setCellValueByColumnAndRow(2, $excel_row, $row->no_peminjaman);
 			$object->getActiveSheet()->setCellValueByColumnAndRow(3, $excel_row, $row->status_peminjam);
 			$object->getActiveSheet()->setCellValueByColumnAndRow(4, $excel_row, $row->id_peminjam);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(5, $excel_row, $row->peminjam);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(6, $excel_row, $row->tgl.' '.$row->jam_pinjam);
+			$object->getActiveSheet()->setCellValueByColumnAndRow(7, $excel_row, $row->tgl_kembali.' '.$row->jam_kembali);
 			$excel_row++;
+			$i++;
 		}
 		
 		$object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel2007');
 		header('Content-Type: application/vnd.ms-excel');
-		header('Content-Disposition: attachment;filename="Employee Data.xlsx"');
+		header('Content-Disposition: attachment;filename="Data Peminjaman.xlsx"');
 		$object_writer->save('php://output');
 		//print_r($data);
 	}
