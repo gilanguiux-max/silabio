@@ -24,6 +24,7 @@
 			<?php
 				}
 				else if($info['extension'] == 'xlsx'){
+					/*
 					$this->load->library('Excel');
 					chmod($row->files, 666);
 					$objPHPExcel = PHPExcel_IOFactory::load($row->files);
@@ -44,6 +45,7 @@
 					
 					$jumlah_baris = $objPHPExcel->setActiveSheetIndex(0)->getHighestRow();
 					$data = $arr_data;
+					*/
 			?>
 				<div class="box-body">
 					<table width="100%" id="tableku" class="table table-striped">
@@ -58,7 +60,7 @@
 							<tr>
 								<td align="center"><?=$i-1?></td>
 								<?php for($j=1; $j <= $kolom; $j++){?>
-								<td align="center"><?php print($data[$i][$j]);?></td>
+								<td align="center"><?php print($excel[$i][$j]);?></td>
 							<?php }
 								echo "</tr>";
 							}?>

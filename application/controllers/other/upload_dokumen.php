@@ -86,6 +86,37 @@ class upload_dokumen extends CI_Controller {
 		$this->fungsi->check_previleges('upload_dokumen');
 		if($id == '' || !is_numeric($id)) die;
 		$data['dokumen'] = $this->m_upload_dokumen->getData($id)->result();
+		
+		foreach($data['dokumen'] as $row){
+			$info = pathinfo($row->files);
+		}
+		
+		if ($info['extension'] == 'xlsx'){
+			$this->load->library('Excel');
+			chmod($row->files, 666);
+			$objPHPExcel = PHPExcel_IOFactory::load($row->files);
+			$cell_collection = $objPHPExcel->getActiveSheet()->getCellCollection();
+			$letters = array_combine(range('A','Z'), range('1', '26'));
+			foreach ($cell_collection as $cell) {
+				$column = $objPHPExcel->getActiveSheet()->getCell($cell)->getColumn();
+				$row = $objPHPExcel->getActiveSheet()->getCell($cell)->getRow();
+				$data_value = $objPHPExcel->getActiveSheet()->getCell($cell)->getValue();
+				$kolom = $letters[$column];
+				
+				if ($row == 1) {
+					$header[$row][$kolom] = $data_value;
+				} else {
+					$arr_data[$row][$kolom] = $data_value;
+				}
+			}
+			
+			$data['kolom'] = $kolom;
+			$data['header'] = $header;
+			$data['jumlah_baris'] = $objPHPExcel->setActiveSheetIndex(0)->getHighestRow();
+			$data['excel'] = $arr_data;
+		}
+		
+		//print_r($data);
 		$this->load->view('other/v_upload_dokumen_show', $data);
 	}
 }
