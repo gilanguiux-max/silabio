@@ -60,7 +60,7 @@ class Auth {
         $this->CI->db->select('cs.*,ml.level as nama_level');
         $this->CI->db->where('cs.username', $username);
         $this->CI->db->where('bagian', 1);
-        $this->CI->db->where("cs.password=password('$password')");
+        $this->CI->db->where("cs.password=CONCAT('*', UPPER(SHA1(UNHEX(SHA1('$password')))))");
         $this->CI->db->join('master_level ml', 'ml.id = cs.level', 'left');
         $query = $this->CI->db->get('cms_user cs');
 
